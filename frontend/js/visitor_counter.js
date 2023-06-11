@@ -1,5 +1,5 @@
 // define the callAPI function that takes a first name and last name as parameters
-var callAPI = (firstName,lastName)=>{
+var callAPI = ()=>{
   // instantiate a headers object
   //var myHeaders = new Headers();
   
@@ -7,7 +7,7 @@ var callAPI = (firstName,lastName)=>{
   //myHeaders.append("Content-Type", "application/json");
   
   // using the built-in JSON utility package, turn object to string and store in a variable
-  var raw = JSON.stringify({"firstName":firstName,"lastName":lastName});
+  //var raw = JSON.stringify({"firstName":firstName,"lastName":lastName});
   
   // create a JSON object with parameters for API call and store in a variable
   var requestOptions = {
@@ -18,7 +18,7 @@ var callAPI = (firstName,lastName)=>{
   };
   
   // make API call with parameters and use promises to get response
-  fetch("https://k1mjxiesd7.execute-api.us-east-1.amazonaws.com/dev/visitor-count", requestOptions)
+  fetch("https://cxr86vzx9e.execute-api.us-east-1.amazonaws.com/visitor_count_stage", requestOptions)
   //.then(response => response.text())
   .then(response => {
     return response.json();
