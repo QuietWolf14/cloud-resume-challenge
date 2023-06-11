@@ -1,0 +1,16 @@
+h1 {
+  text-align: center;
+}
+p.section-heading {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+#count {
+  text-align: center;
+}
+
+#count-el {
+  font-weight: bold;
+  font-size: large;
+}
