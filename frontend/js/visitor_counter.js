@@ -15,7 +15,7 @@ var callAPI = ()=>{
   };
   
   // make API call with parameters and use promises to get response
-  fetch(" https://x0qaqtpk5m.execute-api.us-east-1.amazonaws.com/visitor_count_stage", requestOptions)
+  fetch("https://x0qaqtpk5m.execute-api.us-east-1.amazonaws.com/visitor_count_stage/{proxy+}", requestOptions)
   .then(response => {
     return response.json();
   })
