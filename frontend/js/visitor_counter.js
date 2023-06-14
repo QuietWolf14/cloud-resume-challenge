@@ -6,9 +6,6 @@ var callAPI = ()=>{
   // add content type header to object
   //myHeaders.append("Content-Type", "application/json");
   
-  // using the built-in JSON utility package, turn object to string and store in a variable
-  //var raw = JSON.stringify({"firstName":firstName,"lastName":lastName});
-  
   // create a JSON object with parameters for API call and store in a variable
   var requestOptions = {
       method: 'GET',
@@ -18,8 +15,7 @@ var callAPI = ()=>{
   };
   
   // make API call with parameters and use promises to get response
-  fetch("https://cxr86vzx9e.execute-api.us-east-1.amazonaws.com/visitor_count_stage", requestOptions)
-  //.then(response => response.text())
+  fetch(" https://x0qaqtpk5m.execute-api.us-east-1.amazonaws.com/visitor_count_stage", requestOptions)
   .then(response => {
     return response.json();
   })
