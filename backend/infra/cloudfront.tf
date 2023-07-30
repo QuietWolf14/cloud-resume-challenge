@@ -1,3 +1,19 @@
+# certificate for main bucket cloudfront distribution
+resource "aws_acm_certificate" "main_cert" {
+  domain_name       = "forevertechstudent.com"
+  subject_alternative_names = ["www.forevertechstudent.com"]
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_acm_certificate_validation" "main_cert" {
+  certificate_arn         = aws_acm_certificate.main_cert.arn
+  validation_record_fqdns = aws_route53_record.main_cert_validation_record.*.fqdn
+}
+
 # cloudfront distribution for main bucket
 resource "aws_cloudfront_distribution" "fts_distr" {
   enabled = true
@@ -6,8 +22,8 @@ resource "aws_cloudfront_distribution" "fts_distr" {
   
   
   origin {
-    domain_name = "forevertechstudent.com.s3-website-us-east-1.amazonaws.com"
-    origin_id   = "forevertechstudent.com.s3-website-us-east-1.amazonaws.com"
+    domain_name = aws_s3_bucket_website_configuration.fts.website_endpoint
+    origin_id   = aws_s3_bucket_website_configuration.fts.website_endpoint
     connection_attempts = 3
     connection_timeout = 10
    
@@ -41,7 +57,7 @@ resource "aws_cloudfront_distribution" "fts_distr" {
   }
 
   viewer_certificate {    
-    acm_certificate_arn = "arn:aws:acm:us-east-1:825549574380:certificate/cfd924f5-b411-418c-931b-b6cbc17e4f50"
+    acm_certificate_arn = aws_acm_certificate.main_cert.arn
     cloudfront_default_certificate = false
     iam_certificate_id = ""
     minimum_protocol_version = "TLSv1.2_2021"
@@ -50,11 +66,26 @@ resource "aws_cloudfront_distribution" "fts_distr" {
 }
 
 
+# certificate for www bucket cloudfront distribution
+# resource "aws_acm_certificate" "www_cert" {
+#   domain_name       = "www.forevertechstudent.com"
+#   validation_method = "DNS"
+
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
+
+# resource "aws_acm_certificate_validation" "www_cert" {
+#   certificate_arn         = aws_acm_certificate.www_cert.arn
+#   validation_record_fqdns = [aws_route53_record.www_cert_validation_record.fqdn]
+# }
+
 # cloudfront distribution for www bucket
 resource "aws_cloudfront_distribution" "fts_distr-www" {
   origin {
-    domain_name = "www.forevertechstudent.com.s3-website-us-east-1.amazonaws.com"
-    origin_id   = "www.forevertechstudent.com.s3-website-us-east-1.amazonaws.com"
+    domain_name = aws_s3_bucket_website_configuration.fts-www.website_endpoint
+    origin_id   = aws_s3_bucket_website_configuration.fts-www.website_endpoint
     connection_attempts = 3
     connection_timeout = 10
 
@@ -93,12 +124,10 @@ resource "aws_cloudfront_distribution" "fts_distr-www" {
   }
 
   viewer_certificate {    
-    acm_certificate_arn = "arn:aws:acm:us-east-1:825549574380:certificate/cfd924f5-b411-418c-931b-b6cbc17e4f50"
+    acm_certificate_arn = aws_acm_certificate.main_cert.arn
     cloudfront_default_certificate = false
     iam_certificate_id = ""
     minimum_protocol_version = "TLSv1.2_2021"
     ssl_support_method = "sni-only"
   }
-
-  
 }

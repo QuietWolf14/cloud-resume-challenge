@@ -1,64 +1,44 @@
-# fts hosted zone
-resource "aws_route53_zone" "fts" {
-  name = "forevertechstudent.com"
-  comment = "zone for my portfolio website"
+data "aws_route53_zone" "fts" {
+  name         = "forevertechstudent.com"
+  private_zone = false
 }
 
-resource "aws_route53_record" "fts-ns" {
-  zone_id = aws_route53_zone.fts.zone_id
-  name    = "forevertechstudent.com"
-  type    = "NS"
-  ttl     = "172800"
-  records = ["ns-1152.awsdns-16.org.",
-             "ns-1820.awsdns-35.co.uk.",
-             "ns-495.awsdns-61.com.",
-             "ns-726.awsdns-26.net."]
-}
-
-resource "aws_route53_record" "fts-soa" {
-  zone_id = aws_route53_zone.fts.zone_id
-  name    = "forevertechstudent.com"
-  type    = "SOA"
-  ttl     = "900"
-  records = ["ns-495.awsdns-61.com. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"]
-}
-
+# https://stackoverflow.com/questions/59584443/why-error-alias-target-name-does-not-lie-within-the-target-zone-in-terraform
 resource "aws_route53_record" "fts-a" {
-  zone_id = aws_route53_zone.fts.zone_id
+  zone_id = data.aws_route53_zone.fts.zone_id
   name    = "forevertechstudent.com"
   type    = "A"
+  allow_overwrite = true
 
   alias {
     name = aws_cloudfront_distribution.fts_distr.domain_name
-    zone_id = "Z2FDTNDATAQYW2"
+    zone_id = aws_cloudfront_distribution.fts_distr.hosted_zone_id
     evaluate_target_health = false
   }
 }
 
+# https://stackoverflow.com/questions/59584443/why-error-alias-target-name-does-not-lie-within-the-target-zone-in-terraform
 resource "aws_route53_record" "fts-www-a" {
-  zone_id = aws_route53_zone.fts.zone_id
+  zone_id = data.aws_route53_zone.fts.zone_id
   name    = "www.forevertechstudent.com"
   type    = "A"
+  allow_overwrite = true
 
   alias {
     name = aws_cloudfront_distribution.fts_distr-www.domain_name
-    zone_id = "Z2FDTNDATAQYW2"
+    zone_id = aws_cloudfront_distribution.fts_distr.hosted_zone_id
     evaluate_target_health = false
   }
 }
 
-resource "aws_route53_record" "fts-cname" {
-  zone_id = aws_route53_zone.fts.zone_id
-  name    = "_27f8ab11ad4f4cf6bf683a8e45d6638c.forevertechstudent.com"
-  type    = "CNAME"
-  ttl     = "300"
-  records = ["_39275f2c689ddac39e118a758316dd24.fpktwqqglf.acm-validations.aws."]
-}
+#https://stackoverflow.com/questions/57644466/missing-dns-validation-record-when-using-terraform-aws-acm-certificate-validatio
 
-resource "aws_route53_record" "fts-www-cname" {
-  zone_id = aws_route53_zone.fts.zone_id
-  name    = "_e8221ec8537785ea58a35c508e9ad982.www.forevertechstudent.com"
-  type    = "CNAME"
+resource "aws_route53_record" "main_cert_validation_record" {
+  count = length(var.alternative-names) + 1
+  zone_id = data.aws_route53_zone.fts.zone_id
+  name    = element(aws_acm_certificate.main_cert.domain_validation_options.*.resource_record_name, count.index)
+  type    = element(aws_acm_certificate.main_cert.domain_validation_options.*.resource_record_type, count.index)
+  records = [element(aws_acm_certificate.main_cert.domain_validation_options.*.resource_record_value, count.index)]
   ttl     = "300"
-  records = ["_93396072ed4e0563d47b114a250431f0.fpktwqqglf.acm-validations.aws."]
+  allow_overwrite = true
 }

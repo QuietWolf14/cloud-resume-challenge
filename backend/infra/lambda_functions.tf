@@ -8,13 +8,17 @@ locals {
   //Default timeout is 3 sec. so increase to 5 sec. just in case
   timeout = 5
   //The .zip file to create locally and upload to AWS
-  lambda_zip_file = "../lambda/output/visitor_count.zip"
+  lambda_zip_file = "../lambda/terraform_output/visitor_count.zip"
 }
 
-data "archive_file" "lambda" {
+data "archive_file" "dummy" {
   type = "zip"
-  source_file = "../lambda/visitor_count.py"
   output_path = "${local.lambda_zip_file}"
+
+  source {
+    content = "hello"
+    filename = "dummy.txt"
+  }
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -83,15 +87,10 @@ resource "aws_iam_role_policy_attachment" "func_policy" {
 }
 
 resource "aws_lambda_function" "default" {
+  filename = local.lambda_zip_file
   function_name = local.function_name
   handler = local.handler
   runtime = local.runtime
-  timeout = local.timeout
-
-  // Upload the .zip file Terraform created to AWS
-  filename = local.lambda_zip_file
-  source_code_hash = data.archive_file.lambda.output_base64sha256
-
-  // Connect IAM resource to lambda function in AWS
-  role = aws_iam_role.default.arn
+  timeout = local.timeout 
+  role = aws_iam_role.default.arn // Connect IAM resource to lambda function in AWS
 }
