@@ -10,7 +10,6 @@ on:
 
 jobs:
   release:
-    name: Deploy lambda function
     runs-on: ubuntu-latest
     # These permissions are needed to interact with GitHub's OIDC Token endpoint.
     permissions:
@@ -19,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: action/checkout@v1
+        uses: actions/checkout@v1
       
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
