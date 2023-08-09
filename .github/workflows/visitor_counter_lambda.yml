@@ -28,7 +28,7 @@ jobs:
       
       - name: Zip Lambda Function
         run: |
-          zip -r9 visitor_count.zip visitor-count.py
+          zip -r9 visitor_count.zip . -i visitor-count.py
       
       - name: AWS Deploy
         run: |
