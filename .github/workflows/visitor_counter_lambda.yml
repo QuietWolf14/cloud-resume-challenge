@@ -32,4 +32,4 @@ jobs:
       
       - name: AWS Deploy
         run: |
-          aws lambda update-function-code --profile prod --function-name visitor-count --region us-east-1 --zip-file fileb://visitor_count.zip
+          aws lambda update-function-code --function-name visitor-count --region us-east-1 --zip-file fileb://visitor_count.zip
