@@ -32,7 +32,7 @@ jobs:
 
       - name: Zip Lambda Function
         run: |
-           zip -r9 visitor_count.zip .
+           zip -r9 visitor_count.zip ./backend/lambda
       
       - name: AWS Deploy
         run: |
