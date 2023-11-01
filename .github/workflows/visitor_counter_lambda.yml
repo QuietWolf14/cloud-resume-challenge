@@ -29,7 +29,7 @@ jobs:
       - name: Install python dependencies
         working-directory: ./backend/lambda
         run: |
-           pip install -r backend/lambda/requirements.txt
+           pip install -r requirements.txt
 
       - name: Zip Lambda Function
         run: |
