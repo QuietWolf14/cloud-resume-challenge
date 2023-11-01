@@ -27,6 +27,7 @@ jobs:
           aws-region: us-east-1
       
       - name: Install python dependencies
+        working-directory: ./backend/lambda
         run: |
            pip install -r backend/lambda/requirements.txt
 
