@@ -26,12 +26,16 @@ jobs:
           role-to-assume: arn:aws:iam::371077785672:role/GithubActionsRole        
           aws-region: us-east-1
       
-      # - name: Zip Lambda Function
-      #   run: |
-      #     zip -r9 visitor_count.zip . -i backend/lambda/visitor_count.py
+      - name: Install python dependencies
+        run: |
+           pip install -r backend/lambda/requirements.txt
+
+      - name: Zip Lambda Function
+        run: |
+           zip -r9 visitor_count.zip . -i backend/lambda/visitor_count.py
       
       - name: AWS Deploy
-        # run: |
-        #   aws lambda update-function-code --function-name visitor-count --region us-east-1 --zip-file fileb://visitor_count.zip
         run: |
-          aws lambda update-function-code --function-name visitor-count --region us-east-1 --zip-file fileb://backend/lambda/visitor_count.zip
+           aws lambda update-function-code --function-name visitor-count --region us-east-1 --zip-file fileb://visitor_count.zip
+        #run: |
+        #  aws lambda update-function-code --function-name visitor-count --region us-east-1 --zip-file fileb://backend/lambda/visitor_count.zip
