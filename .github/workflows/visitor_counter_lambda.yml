@@ -25,16 +25,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::371077785672:role/GithubActionsRole        
           aws-region: us-east-1
-      
-      # - name: Create virtual environment for dependencies
-      #   working-directory: ./backend/lambda
-      #   run: |
-      #      python3 -m venv venv
-      
-      # - name: Activate virtual environment
-      #   working-directory: ./backend/lambda
-      #   run: |
-      #      source venv/bin/activate
 
       - name: Install dependencies with LambCI
         uses: docker://lambci/lambda:build-python3.8
@@ -43,11 +33,11 @@ jobs:
           args: install -r ./backend/lambda/requirements.txt --target ./backend/lambda
 
       - name: Zip Lambda Function
+        working-directory: ./backend/lambda
         run: |
-           zip -r9 visitor_count.zip ./backend/lambda -x ./backend/lambda/requirements.txt
+           zip -r9 visitor_count.zip . -x ./backend/lambda/requirements.txt
       
       - name: AWS Deploy
+        working-directory: ./backend/lambda
         run: |
            aws lambda update-function-code --function-name visitor-count --region us-east-1 --zip-file fileb://visitor_count.zip
-        #run: |
-        #  aws lambda update-function-code --function-name visitor-count --region us-east-1 --zip-file fileb://backend/lambda/visitor_count.zip
